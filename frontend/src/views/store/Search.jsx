@@ -16,7 +16,7 @@ const Toast = Swal.mixin({
 
 function Search() {
   const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [selectedQuantity, setSelectedQuantity] = useState({});
   const [selectedColors, setSelectedColors] = useState({});
@@ -31,12 +31,6 @@ function Search() {
       setProductsLoading(false);
     });
   };
-
-  useEffect(() => {
-    apiInstance.get(`category/`).then((response) => {
-      setCategory(response.data);
-    });
-  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -280,7 +274,7 @@ function Search() {
 
             {/* Categories START*/}
             <div className="row">
-              {category?.map((c, index) => (
+              {categories?.map((c, index) => (
                 <div key={c.id} className="col-lg-2">
                   <img
                     src={c.image}
