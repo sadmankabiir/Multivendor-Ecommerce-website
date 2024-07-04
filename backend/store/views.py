@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
@@ -489,11 +490,14 @@ class ReviewListAPIView(generics.ListCreateAPIView):
     
         return Response( {"message": "Review Created Successfully."}, status=status.HTTP_200_OK)
     
-class SearchProductAPIView(generics.ListCreateAPIView):
+class SearchProductAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        query = self.request.GET.get("query")
-        products = Product.objects.filter(status="published", title__icontains=query)
+        query = self.request.GET.get('query', '')
+        products = Product.objects.filter(
+            Q(status='published') & 
+            (Q(title__icontains=query) | Q(description__icontains=query) | Q(category__title__icontains=query))
+        )
         return products
